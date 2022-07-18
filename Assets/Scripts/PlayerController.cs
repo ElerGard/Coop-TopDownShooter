@@ -13,6 +13,7 @@ enum PlayerState
 public class PlayerController : NetworkBehaviour
 {
     private PlayerState playerState = PlayerState.NO_ACTION;
+    private GameObject network;
 
     [Header("Weapon")]
     public Transform firePoint;
@@ -27,9 +28,6 @@ public class PlayerController : NetworkBehaviour
 
     [Header("Movement")]
     [SerializeField] public float movementSpeed = 10f;
-
-    [Header("Network")]
-    GameObject net;
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -98,7 +96,7 @@ public class PlayerController : NetworkBehaviour
 
     private void Awake()
     {
-        net = GameObject.Find("NetworkCreator");
+        network = GameObject.Find("NetworkCreator");
     }
 
     void Start()
@@ -113,8 +111,6 @@ public class PlayerController : NetworkBehaviour
     {
         if (!stopMoveUp && Input.GetKey("w"))
         {
-            Debug.Log("w");
-
             transform.position += new Vector3(0, Time.deltaTime * movementSpeed, 0);
         }
         if (!stopMoveDown && Input.GetKey("s"))
@@ -135,6 +131,12 @@ public class PlayerController : NetworkBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             FireServerRpc();
+        }
+
+        if (Input.GetKeyDown("h"))
+        {
+            Debug.Log("H pressed");
+            network.GetComponent<GameServer>().SpawnEnemyServerRpc();
         }
     }
 }
